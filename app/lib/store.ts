@@ -96,6 +96,27 @@ export const useSpendableStore = create<SpendableState>()(
           return { settings, ...derived };
         }),
     }),
-    { name: "spendable-storage" }
+    {
+      name: "spendable-storage",
+      version: 1,
+      migrate: (persisted, version) => {
+        // v0 → v1: no structural changes yet; return as-is
+        return persisted;
+      },
+      partialize: (state) => ({
+        income: state.income,
+        expenses: state.expenses,
+        transactions: state.transactions,
+        settings: state.settings,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          const derived = recalc(state);
+          state.safeToSpendCents = derived.safeToSpendCents;
+          state.nextPayday = derived.nextPayday;
+          state.committedCents = derived.committedCents;
+        }
+      },
+    }
   )
 );
