@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 import { Expense, Income, Settings, Transaction } from "./types";
 import { calcSafeToSpend } from "./calculate";
 
-interface SpendableState {
+export interface SpendableState {
   income: Income | null;
   expenses: Expense[];
   transactions: Transaction[];

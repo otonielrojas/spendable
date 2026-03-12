@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useSpendableStore } from "@/lib/store";
+import { useSpendableStore, type SpendableState } from "@/lib/store";
 
 // Reset store state between tests
 beforeEach(() => {
@@ -51,7 +51,7 @@ describe("store — onRehydrateStorage", () => {
     // Invoke onRehydrateStorage callback directly
     // @ts-expect-error — accessing internal persist api
     const onRehydrate = useSpendableStore.persist.getOptions().onRehydrateStorage();
-    onRehydrate(rehydrated as Parameters<typeof onRehydrate>[0]);
+    onRehydrate(rehydrated as SpendableState);
 
     // Should have recomputed: 500000 - 150000 - 20000 = 330000
     expect(rehydrated.safeToSpendCents).toBe(330000);
