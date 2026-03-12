@@ -1,6 +1,6 @@
 # Spendable — Roadmap
 
-> Last updated: 2026-03-12
+> Last updated: 2026-03-12 (M2 complete)
 
 ## Milestones
 
@@ -18,16 +18,19 @@
 - [x] Core UI components (SafeToSpendCard, BalanceInput, SetupIncome, ExpenseList, TransactionLog)
 - [x] App renders and basic flow works
 
-### M2 — Testing & CI/CD 🔄 *(in progress)*
+### M2 — Testing & CI/CD ✅
 - [x] Vitest + React Testing Library configured
 - [x] Playwright E2E configured
-- [ ] Unit tests: calculation engine (100% coverage target)
+- [x] Unit tests: calculate.ts (20 tests, full coverage of engine)
+- [x] Store tests: partialize, rehydration, actions (26 tests total)
 - [ ] Component tests: SafeToSpendCard, SetupIncome, ExpenseList
 - [ ] E2E test: full happy path (set income → add expense → see Safe to Spend)
 - [x] Git repo initialized at project root
-- [x] GitHub repo created and connected
-- [x] Netlify auto-deploy on push to main
-- [ ] GitHub Actions CI: lint + test on every PR
+- [x] GitHub repo: https://github.com/otonielrojas/spendable
+- [x] Netlify auto-deploy on merge to master → https://spendable.netlify.app
+- [x] Netlify PR deploy previews (unique URL per open PR)
+- [x] GitHub Actions CI: lint + unit tests on every PR
+- [x] Development workflow documented in CLAUDE.md (branch naming, PR checklist, merge policy)
 
 ### M3 — MVP Polish
 - [ ] Persistence: localStorage so data survives refresh
