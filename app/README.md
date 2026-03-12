@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Spendable — App
 
-## Getting Started
+The Next.js application source. See the [root README](../README.md) for the project overview.
 
-First, run the development server:
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server with hot reload |
+| `npm run build` | Production build + TypeScript check |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest unit tests (run once) |
+| `npm run test:watch` | Vitest in watch mode |
+| `npm run test:coverage` | Coverage report |
+| `npm run test:e2e` | Playwright E2E (requires `npm run dev` or built app) |
+| `npm run test:e2e:ui` | Playwright with interactive UI |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Key files
 
-## Learn More
+| File | Purpose |
+|------|---------|
+| `lib/types.ts` | Shared TypeScript types (`Income`, `Expense`, `Transaction`, `Settings`) |
+| `lib/calculate.ts` | Pure Safe-to-Spend engine — no side effects, fully unit-tested |
+| `lib/store.ts` | Zustand store with localStorage persistence |
+| `app/page.tsx` | Main page — composes all feature components |
+| `components/spendable/` | Feature components |
+| `components/ui/` | shadcn/ui primitives |
+| `__tests__/unit/` | Vitest unit tests |
+| `__tests__/e2e/` | Playwright E2E tests |
 
-To learn more about Next.js, take a look at the following resources:
+## Persistence
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Data is stored in `localStorage["spendable-storage"]` via Zustand's `persist` middleware.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Only source-of-truth fields are stored (`partialize`)
+- Derived fields (`safeToSpendCents`, `nextPayday`, `committedCents`) are recalculated on rehydration
+- Schema version is `1` — bump `version` in `store.ts` and add a `migrate` handler when changing the data model
