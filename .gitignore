@@ -1,0 +1,31 @@
+# Next.js
+app/.next/
+app/out/
+
+# Dependencies
+app/node_modules/
+
+# Build
+app/build/
+
+# Env files
+.env
+.env.local
+.env.*.local
+app/.env
+app/.env.local
+app/.env.*.local
+
+# Playwright
+app/playwright-report/
+app/test-results/
+
+# Vitest
+app/coverage/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude
+.claude/
