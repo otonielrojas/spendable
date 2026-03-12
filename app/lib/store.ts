@@ -36,7 +36,7 @@ function recalc(state: Pick<SpendableState, "income" | "expenses" | "settings">)
 
 export const useSpendableStore = create<SpendableState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       income: null,
       expenses: [],
       transactions: [],
@@ -99,7 +99,7 @@ export const useSpendableStore = create<SpendableState>()(
     {
       name: "spendable-storage",
       version: 1,
-      migrate: (persisted, version) => {
+      migrate: (persisted, _version) => {
         // v0 → v1: no structural changes yet; return as-is
         return persisted;
       },

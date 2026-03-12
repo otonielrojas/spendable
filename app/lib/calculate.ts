@@ -1,7 +1,7 @@
 import { Expense, Income, PayFrequency } from "./types";
 
 /** Returns the number of days between two ISO date strings */
-function daysBetween(a: string, b: string): number {
+function _daysBetween(a: string, b: string): number {
   const msPerDay = 1000 * 60 * 60 * 24;
   return Math.round(
     (new Date(b).getTime() - new Date(a).getTime()) / msPerDay
