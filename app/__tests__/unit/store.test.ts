@@ -1,5 +1,13 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useSpendableStore } from "@/lib/store";
+import { todayISO } from "@/lib/calculate";
+
+/** Returns an ISO date string n days from today */
+function daysFromNow(n: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split("T")[0];
+}
 
 // Reset store state between tests
 beforeEach(() => {
@@ -31,15 +39,20 @@ describe("store — partialize", () => {
 
 describe("store — onRehydrateStorage", () => {
   it("recalculates derived state after rehydration", () => {
+    // Use future dates so the test stays valid regardless of when it runs.
+    // nextPayday is 7 days out; expense is due in 3 days (within the pay period).
+    const futurePayday = daysFromNow(7);
+    const futureExpenseDue = daysFromNow(3);
+
     // Simulate rehydrated raw state (as if loaded from localStorage)
     const rehydrated = {
       income: {
         amountCents: 300000,
-        nextPayday: "2026-03-20",
+        nextPayday: futurePayday,
         frequency: "biweekly" as const,
       },
       expenses: [
-        { id: "1", name: "Rent", amountCents: 150000, dueDate: "2026-03-15", isRecurring: true },
+        { id: "1", name: "Rent", amountCents: 150000, dueDate: futureExpenseDue, isRecurring: true },
       ],
       transactions: [],
       settings: { bufferCents: 20000, currentBalanceCents: 500000 },
@@ -56,7 +69,7 @@ describe("store — onRehydrateStorage", () => {
     // Should have recomputed: 500000 - 150000 - 20000 = 330000
     expect(rehydrated.safeToSpendCents).toBe(330000);
     expect(rehydrated.committedCents).toBe(150000);
-    expect(rehydrated.nextPayday).toBe("2026-03-20");
+    expect(rehydrated.nextPayday).toBe(futurePayday);
   });
 });
 
@@ -69,9 +82,11 @@ describe("store — schema version", () => {
 });
 
 describe("store — actions", () => {
+  // Use a future payday so the test stays valid regardless of when it runs.
+  const futurePayday = daysFromNow(7);
   const income = {
     amountCents: 300000,
-    nextPayday: "2026-03-20",
+    nextPayday: futurePayday,
     frequency: "biweekly" as const,
   };
 
@@ -79,7 +94,7 @@ describe("store — actions", () => {
     useSpendableStore.getState().updateSettings({ currentBalanceCents: 500000 });
     useSpendableStore.getState().setIncome(income);
     const s = useSpendableStore.getState();
-    expect(s.nextPayday).toBe("2026-03-20");
+    expect(s.nextPayday).toBe(futurePayday);
     expect(s.safeToSpendCents).toBe(480000); // 500000 - 0 committed - 20000 buffer
   });
 

@@ -141,11 +141,14 @@ describe("calcSafeToSpend", () => {
   it("subtracts committed expenses and buffer from balance", () => {
     // balance: $5,000 | rent: $1,500 | netflix: $15.99 | buffer: $200
     // safe = 500000 - 151599 - 20000 = 328401
+    // Pin today to 2026-03-12 so fixture dates (rent: 03-15, netflix: 03-18,
+    // payday: 03-20) are all in the future relative to the test's reference date.
     const result = calcSafeToSpend({
       currentBalanceCents: 500000,
       expenses: [rent, netflix],
       bufferCents: 20000,
       income: biweeklyIncome,
+      today: "2026-03-12",
     });
     expect(result.safeToSpendCents).toBe(328401);
     expect(result.committedCents).toBe(151599);
@@ -158,6 +161,7 @@ describe("calcSafeToSpend", () => {
       expenses: [rent],
       bufferCents: 50000,
       income: biweeklyIncome,
+      today: "2026-03-12",
     });
     expect(result.safeToSpendCents).toBe(-100000);
   });
