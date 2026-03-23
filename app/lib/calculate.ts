@@ -61,18 +61,20 @@ export function calcSafeToSpend({
   expenses,
   bufferCents,
   income,
+  today = todayISO(),
 }: {
   currentBalanceCents: number;
   expenses: Expense[];
   bufferCents: number;
   income: Income | null;
+  today?: string;
 }): { safeToSpendCents: number; nextPayday: string | null; committedCents: number } {
   if (!income) {
     return { safeToSpendCents: 0, nextPayday: null, committedCents: 0 };
   }
 
-  const nextPayday = getNextPayday(income);
-  const committed = expensesDueBeforePayday(expenses, nextPayday);
+  const nextPayday = getNextPayday(income, today);
+  const committed = expensesDueBeforePayday(expenses, nextPayday, today);
   const committedCents = sumExpenses(committed);
   const safeToSpendCents = currentBalanceCents - committedCents - bufferCents;
 
