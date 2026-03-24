@@ -14,6 +14,7 @@ export function HomeContent() {
   const hydrated = useHydrated();
   const income = useSpendableStore((s) => s.income);
   const [onboarded, setOnboarded] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   if (!hydrated) {
     return (
@@ -32,15 +33,30 @@ export function HomeContent() {
     );
   }
 
-  if (!income && !onboarded) {
-    return <OnboardingWizard onComplete={() => setOnboarded(true)} />;
+  const isFirstTime = !income && !onboarded;
+
+  if (isFirstTime || showOnboarding) {
+    return (
+      <OnboardingWizard
+        replay={showOnboarding && !isFirstTime}
+        onComplete={() => { setOnboarded(true); setShowOnboarding(false); }}
+        onDismiss={() => setShowOnboarding(false)}
+      />
+    );
   }
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-md px-4 pb-safe">
-        <header className="py-6 text-center">
+        <header className="py-6 flex items-center justify-center relative">
           <h1 className="text-xl font-bold tracking-tight">spendable</h1>
+          <button
+            onClick={() => setShowOnboarding(true)}
+            title="Show tutorial"
+            className="absolute right-0 text-muted-foreground hover:text-foreground w-8 h-8 rounded-full border flex items-center justify-center text-sm"
+          >
+            ?
+          </button>
         </header>
 
         <SafeToSpendCard />
