@@ -72,7 +72,7 @@ export function ExpenseList() {
             setAdding((v) => !v);
             setErrors({});
           }}
-          className="text-sm text-primary font-medium"
+          className="text-sm text-primary font-medium py-2 px-1"
         >
           {adding ? "Cancel" : "+ Add"}
         </button>
@@ -83,6 +83,9 @@ export function ExpenseList() {
           <div className="flex flex-col gap-1">
             <input
               placeholder="Name (e.g. Rent)"
+              autoCorrect="off"
+              autoCapitalize="words"
+              enterKeyHint="next"
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -100,9 +103,11 @@ export function ExpenseList() {
           <div className="flex flex-col gap-1">
             <input
               type="number"
+              inputMode="decimal"
               placeholder="Amount ($)"
               min="0.01"
               step="0.01"
+              enterKeyHint="next"
               value={amount}
               onChange={(e) => {
                 setAmount(e.target.value);
@@ -122,6 +127,7 @@ export function ExpenseList() {
               type="date"
               value={dueDate}
               min={todayISO()}
+              enterKeyHint="done"
               onChange={(e) => {
                 setDueDate(e.target.value);
                 if (errors.dueDate) setErrors((p) => ({ ...p, dueDate: undefined }));
@@ -137,7 +143,7 @@ export function ExpenseList() {
 
           <button
             onClick={handleAdd}
-            className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium"
+            className="rounded-md bg-primary text-primary-foreground px-4 py-3 text-sm font-medium"
           >
             Add expense
           </button>
@@ -179,7 +185,7 @@ export function ExpenseList() {
                 <span className="font-medium">{formatCurrency(e.amountCents)}</span>
                 <button
                   onClick={() => removeExpense(e.id)}
-                  className="text-muted-foreground hover:text-destructive text-xs"
+                  className="text-muted-foreground hover:text-destructive text-xs p-2"
                 >
                   ✕
                 </button>

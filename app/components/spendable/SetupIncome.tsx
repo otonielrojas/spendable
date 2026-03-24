@@ -41,7 +41,7 @@ export function SetupIncome() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="text-sm text-muted-foreground underline underline-offset-4"
+        className="text-sm text-muted-foreground underline underline-offset-4 py-2 px-1"
       >
         Edit income
       </button>
@@ -84,8 +84,10 @@ export function SetupIncome() {
         Pay per period ($)
         <input
           type="number"
+          inputMode="decimal"
           min="0.01"
           step="0.01"
+          enterKeyHint="next"
           value={amount}
           onChange={(e) => {
             setAmount(e.target.value);
@@ -137,7 +139,7 @@ export function SetupIncome() {
 
       <button
         onClick={handleSave}
-        className="mt-1 rounded-md bg-primary text-primary-foreground px-4 py-2 font-medium text-sm"
+        className="mt-1 rounded-md bg-primary text-primary-foreground px-4 py-3 font-medium text-sm"
       >
         Save
       </button>

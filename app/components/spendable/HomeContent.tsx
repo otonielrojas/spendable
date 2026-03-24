@@ -38,7 +38,7 @@ export function HomeContent() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-md px-4 pb-16">
+      <div className="mx-auto max-w-md px-4 pb-safe">
         <header className="py-6 text-center">
           <h1 className="text-xl font-bold tracking-tight">spendable</h1>
         </header>

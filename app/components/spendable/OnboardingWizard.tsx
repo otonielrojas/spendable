@@ -52,7 +52,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-md px-4 pb-16">
+      <div className="mx-auto max-w-md px-4 pb-safe">
         <header className="py-6 text-center">
           <h1 className="text-xl font-bold tracking-tight">spendable</h1>
         </header>
@@ -84,13 +84,13 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
             <div className="flex gap-3 mt-2">
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 rounded-md border px-4 py-2 text-sm font-medium text-muted-foreground"
+                className="flex-1 rounded-md border px-4 py-3 text-sm font-medium text-muted-foreground"
               >
                 Skip
               </button>
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium"
+                className="flex-1 rounded-md bg-primary text-primary-foreground px-4 py-3 text-sm font-medium"
               >
                 Continue →
               </button>
@@ -106,9 +106,11 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                 Current balance ($)
                 <input
                   type="number"
+                  inputMode="decimal"
                   min="0"
                   step="0.01"
                   autoFocus
+                  enterKeyHint="done"
                   value={balanceValue}
                   placeholder="2400.00"
                   onChange={(e) => {
@@ -127,7 +129,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
             </div>
             <button
               onClick={handleFinish}
-              className="rounded-md bg-primary text-primary-foreground px-4 py-2 font-medium text-sm"
+              className="rounded-md bg-primary text-primary-foreground px-4 py-3 font-medium text-sm"
             >
               See my number →
             </button>

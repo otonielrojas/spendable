@@ -63,7 +63,7 @@ export function TransactionLog() {
             setAdding((v) => !v);
             setErrors({});
           }}
-          className="text-sm text-primary font-medium"
+          className="text-sm text-primary font-medium py-2 px-1"
         >
           {adding ? "Cancel" : "+ Log spend"}
         </button>
@@ -74,6 +74,9 @@ export function TransactionLog() {
           <div className="flex flex-col gap-1">
             <input
               placeholder="What did you spend on?"
+              autoCorrect="off"
+              autoCapitalize="sentences"
+              enterKeyHint="next"
               value={description}
               onChange={(e) => {
                 setDescription(e.target.value);
@@ -91,14 +94,17 @@ export function TransactionLog() {
           <div className="flex flex-col gap-1">
             <input
               type="number"
+              inputMode="decimal"
               placeholder="Amount ($)"
               min="0.01"
               step="0.01"
+              enterKeyHint="done"
               value={amount}
               onChange={(e) => {
                 setAmount(e.target.value);
                 if (errors.amount) setErrors((p) => ({ ...p, amount: undefined }));
               }}
+              onKeyDown={(e) => e.key === "Enter" && handleAdd()}
               className={`border rounded-md px-3 py-2 text-sm bg-background ${
                 errors.amount ? "border-destructive" : ""
               }`}
@@ -110,7 +116,7 @@ export function TransactionLog() {
 
           <button
             onClick={handleAdd}
-            className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium"
+            className="rounded-md bg-primary text-primary-foreground px-4 py-3 text-sm font-medium"
           >
             Log it
           </button>
@@ -148,7 +154,7 @@ export function TransactionLog() {
                 </span>
                 <button
                   onClick={() => removeTransaction(tx.id)}
-                  className="text-muted-foreground hover:text-destructive text-xs"
+                  className="text-muted-foreground hover:text-destructive text-xs p-2"
                 >
                   ✕
                 </button>

@@ -38,7 +38,7 @@ export function BalanceInput() {
     return (
       <button
         onClick={() => setEditing(true)}
-        className="text-sm text-muted-foreground underline underline-offset-4"
+        className="text-sm text-muted-foreground underline underline-offset-4 py-2 px-1"
       >
         Balance: {formatCurrency(settings.currentBalanceCents)} — tap to update
       </button>
@@ -51,9 +51,11 @@ export function BalanceInput() {
         <span className="text-sm font-medium">Balance $</span>
         <input
           type="number"
+          inputMode="decimal"
           min="0"
           step="0.01"
           autoFocus
+          enterKeyHint="done"
           value={value}
           onChange={(e) => {
             setValue(e.target.value);
