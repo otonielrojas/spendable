@@ -40,6 +40,8 @@
 - [ ] Mobile UX pass: touch targets, keyboard behavior, safe area insets
 - [ ] Dark mode support
 - [ ] PWA manifest + installable on mobile homescreen
+- [ ] **At launch:** remove `BETA_PASSWORD` env var from Netlify (disables pre-launch gate)
+- [ ] **At launch:** add Umami analytics snippet to `layout.tsx` (privacy-first, no cookies, GDPR-compliant, free) — enables M4 day-1/day-7 retention tracking without requiring user accounts
 
 ### M4 — Validation & Feedback
 - [ ] Deploy to production URL
@@ -73,3 +75,6 @@
 | 2026-03-11 | Freemium: core free, AI ~$5-8/mo | Lower barrier to adoption; AI features justify upsell |
 | 2026-03-12 | Vitest (not Jest) | Faster, native ESM, better Next.js/React 19 compat |
 | 2026-03-12 | Playwright for E2E (not Cypress) | Better performance, cross-browser, first-class TypeScript |
+| 2026-03-28 | Pre-launch gate via middleware.ts + BETA_PASSWORD env var | Protect unfinished M3 UI from public exposure; remove at launch by unsetting env var |
+| 2026-03-28 | No accounts on free tier (permanent) | "No account required" is a core trust differentiator vs YNAB/PocketGuard; accounts only introduced for Pro tier at M6 |
+| 2026-03-28 | Umami for analytics (not Vercel Analytics) | App is on Netlify; Umami is privacy-first, cookie-free, GDPR-compliant, free — enables M4 retention metrics without violating no-account promise |
