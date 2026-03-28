@@ -5,8 +5,11 @@
 [![CI](https://github.com/otonielrojas/spendable/actions/workflows/ci.yml/badge.svg)](https://github.com/otonielrojas/spendable/actions/workflows/ci.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/spendable/deploy-status)](https://spendable.netlify.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white)
 
-**[spendable.netlify.app →](https://spendable.netlify.app)**
+**[▶ Live Demo → spendable.netlify.app](https://spendable.netlify.app)**
 
 ---
 
@@ -26,6 +29,22 @@ One number. Always visible. Recalculated in real time around your **pay cycle** 
 
 ---
 
+## How It Works
+
+```mermaid
+flowchart LR
+    A["💰 Current Balance"] --> D
+    B["📅 Upcoming Bills\nbefore next payday"] --> D
+    C["🛡️ Safety Buffer\nyou set"] --> D
+    D["⚡ Safe to Spend\n(recalculated live)"] --> E{Positive?}
+    E -->|Yes| F["✅ You're good"]
+    E -->|No| G["🔴 Overspent — review bills"]
+```
+
+Unlike calendar-month budgets, Spendable resets on **your** payday — weekly, biweekly, semi-monthly, or monthly. Log a purchase in seconds and your number updates instantly.
+
+---
+
 ## Features
 
 | Feature | Description |
@@ -36,6 +55,12 @@ One number. Always visible. Recalculated in real time around your **pay cycle** 
 | **Quick-Log** | Add a transaction in seconds; balance updates instantly |
 | **Safety Buffer** | Set a floor you never want to go below |
 | **Zero setup friction** | No account required, no bank link — works immediately |
+
+---
+
+## Screenshots
+
+> Live at [spendable.netlify.app](https://spendable.netlify.app) — mobile-first design.
 
 ---
 
@@ -89,17 +114,24 @@ spendable/
 
 ## Tech Stack
 
-- **Framework:** [Next.js](https://nextjs.org) (App Router)
-- **UI:** [Tailwind CSS](https://tailwindcss.com) + [shadcn/ui](https://ui.shadcn.com)
-- **State:** [Zustand](https://zustand-demo.pmnd.rs) with localStorage persistence
-- **Testing:** [Vitest](https://vitest.dev) + [React Testing Library](https://testing-library.com) + [Playwright](https://playwright.dev)
-- **Hosting:** [Netlify](https://netlify.com)
+| Layer | Technology |
+|-------|-----------|
+| Framework | [Next.js](https://nextjs.org) (App Router) |
+| UI | [Tailwind CSS](https://tailwindcss.com) + [shadcn/ui](https://ui.shadcn.com) |
+| State | [Zustand](https://zustand-demo.pmnd.rs) with localStorage persistence |
+| Testing | [Vitest](https://vitest.dev) + [React Testing Library](https://testing-library.com) + [Playwright](https://playwright.dev) |
+| Hosting | [Netlify](https://netlify.com) |
 
-### Roadmap
+---
 
-- **v2:** Bank account sync via Plaid
-- **v2:** AI-powered insights via Claude API
-- **v3:** Shared finances, irregular income support
+## Roadmap
+
+| Milestone | Focus |
+|-----------|-------|
+| **M3** (current) | Polish — onboarding, empty states, mobile UX, dark mode, PWA |
+| **M4** | Share with 10 users, collect feedback, measure day-1/7 retention |
+| **M5** | Bank account sync via Plaid |
+| **M6** | AI-powered insights via Claude API — premium tier |
 
 See [`docs/roadmap.md`](docs/roadmap.md) for the full milestone breakdown.
 
