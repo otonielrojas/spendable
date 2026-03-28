@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSpendableStore } from "@/lib/store";
 import { PayFrequency } from "@/lib/types";
 import { todayISO } from "@/lib/calculate";
+import { useHydrated } from "@/lib/useHydrated";
 
 const FREQUENCIES: { value: PayFrequency; label: string }[] = [
   { value: "weekly", label: "Weekly" },
@@ -13,31 +14,65 @@ const FREQUENCIES: { value: PayFrequency; label: string }[] = [
 ];
 
 export function SetupIncome() {
+  const hydrated = useHydrated();
   const { income, setIncome } = useSpendableStore();
-  const [amount, setAmount] = useState(
-    income ? (income.amountCents / 100).toFixed(2) : ""
-  );
-  const [nextPayday, setNextPayday] = useState(income?.nextPayday ?? "");
-  const [frequency, setFrequency] = useState<PayFrequency>(
-    income?.frequency ?? "biweekly"
-  );
-  const [open, setOpen] = useState(!income);
+
+  const [amount, setAmount] = useState("");
+  const [nextPayday, setNextPayday] = useState("");
+  const [frequency, setFrequency] = useState<PayFrequency>("biweekly");
+  const [open, setOpen] = useState(false);
+  const [errors, setErrors] = useState<{ amount?: string; nextPayday?: string }>({});
+
+  // Once hydrated, initialize form state from persisted income
+  const [initialized, setInitialized] = useState(false);
+  if (hydrated && !initialized) {
+    setAmount(income ? (income.amountCents / 100).toFixed(2) : "");
+    setNextPayday(income?.nextPayday ?? "");
+    setFrequency(income?.frequency ?? "biweekly");
+    setOpen(!income);
+    setInitialized(true);
+  }
+
+  if (!hydrated) {
+    return <div className="h-8 w-24 rounded bg-muted animate-pulse" />;
+  }
 
   if (!open) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="text-sm text-muted-foreground underline underline-offset-4"
+        className="text-sm text-muted-foreground underline underline-offset-4 py-2 px-1"
       >
         Edit income
       </button>
     );
   }
 
-  function handleSave() {
+  function validate(): boolean {
+    const next: typeof errors = {};
+
     const cents = Math.round(parseFloat(amount) * 100);
-    if (!cents || isNaN(cents) || !nextPayday) return;
+    if (!amount.trim()) {
+      next.amount = "Enter your pay per period.";
+    } else if (isNaN(cents) || cents <= 0) {
+      next.amount = "Amount must be greater than $0.";
+    }
+
+    if (!nextPayday) {
+      next.nextPayday = "Select your next payday.";
+    } else if (nextPayday < todayISO()) {
+      next.nextPayday = "Payday must be today or in the future.";
+    }
+
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  }
+
+  function handleSave() {
+    if (!validate()) return;
+    const cents = Math.round(parseFloat(amount) * 100);
     setIncome({ amountCents: cents, nextPayday, frequency });
+    setErrors({});
     setOpen(false);
   }
 
@@ -49,13 +84,23 @@ export function SetupIncome() {
         Pay per period ($)
         <input
           type="number"
-          min="0"
+          inputMode="decimal"
+          min="0.01"
           step="0.01"
+          enterKeyHint="next"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => {
+            setAmount(e.target.value);
+            if (errors.amount) setErrors((p) => ({ ...p, amount: undefined }));
+          }}
           placeholder="3500.00"
-          className="border rounded-md px-3 py-2 text-base bg-background"
+          className={`border rounded-md px-3 py-2 text-base bg-background ${
+            errors.amount ? "border-destructive" : ""
+          }`}
         />
+        {errors.amount && (
+          <span className="text-xs text-destructive">{errors.amount}</span>
+        )}
       </label>
 
       <label className="flex flex-col gap-1 text-sm">
@@ -64,9 +109,17 @@ export function SetupIncome() {
           type="date"
           value={nextPayday}
           min={todayISO()}
-          onChange={(e) => setNextPayday(e.target.value)}
-          className="border rounded-md px-3 py-2 text-base bg-background"
+          onChange={(e) => {
+            setNextPayday(e.target.value);
+            if (errors.nextPayday) setErrors((p) => ({ ...p, nextPayday: undefined }));
+          }}
+          className={`border rounded-md px-3 py-2 text-base bg-background ${
+            errors.nextPayday ? "border-destructive" : ""
+          }`}
         />
+        {errors.nextPayday && (
+          <span className="text-xs text-destructive">{errors.nextPayday}</span>
+        )}
       </label>
 
       <label className="flex flex-col gap-1 text-sm">
@@ -86,7 +139,7 @@ export function SetupIncome() {
 
       <button
         onClick={handleSave}
-        className="mt-1 rounded-md bg-primary text-primary-foreground px-4 py-2 font-medium text-sm"
+        className="mt-1 rounded-md bg-primary text-primary-foreground px-4 py-3 font-medium text-sm"
       >
         Save
       </button>

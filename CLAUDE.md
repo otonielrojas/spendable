@@ -160,3 +160,9 @@ Bank sync (Plaid) and AI features are **v2**, not MVP.
 - Roadmap: `docs/roadmap.md`
 - Competitor notes: `docs/competitors.md`
 - Tech decisions: `docs/tech-stack.md`
+
+## Error Logs
+
+Read these before debugging any issue — the fix may already be documented:
+- `C:\Users\otoni\repos\hub\errors\common.md` — shared stack patterns (Next.js, Netlify, Zustand, Vitest)
+- `C:\Users\otoni\repos\hub\errors\spendable.md` — Spendable-specific error log
