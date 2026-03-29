@@ -142,13 +142,13 @@ export function TransactionLog() {
           {transactions.map((tx) => (
             <li
               key={tx.id}
-              className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
+              className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm"
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="font-medium">{tx.description}</span>
                 <span className="ml-2 text-muted-foreground text-xs">{tx.date}</span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 shrink-0">
                 <span className="font-medium text-destructive">
                   −{formatCurrency(tx.amountCents)}
                 </span>
