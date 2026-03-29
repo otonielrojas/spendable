@@ -27,23 +27,25 @@ export function PaydayButton() {
 
   if (!open) {
     return (
-      <div className="flex justify-center">
-        <button
-          onClick={() => setOpen(true)}
-          className="text-sm font-medium text-primary underline underline-offset-4 py-2 px-1"
-        >
-          Got paid? Tap to refresh →
-        </button>
-      </div>
+      <button
+        onClick={() => setOpen(true)}
+        className="w-full rounded-2xl border border-primary/25 bg-primary/5 px-4 py-4 flex items-center justify-between text-left active:bg-primary/10 transition-colors"
+      >
+        <div className="flex flex-col gap-0.5">
+          <p className="text-sm font-semibold text-foreground">Just got paid?</p>
+          <p className="text-xs text-muted-foreground">Refresh your cycle with your new balance</p>
+        </div>
+        <span className="text-primary text-xl font-light ml-3">→</span>
+      </button>
     );
   }
 
   return (
-    <div className="rounded-xl border border-primary/40 bg-primary/5 p-4 flex flex-col gap-3">
+    <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 flex flex-col gap-3">
       <div>
-        <p className="font-semibold text-sm">Payday! What&apos;s your new balance?</p>
+        <p className="font-semibold text-sm">What&apos;s your new balance?</p>
         <p className="text-xs text-muted-foreground mt-0.5">
-          Past expenses and logs will be cleared for the new cycle.
+          Past expenses and logs will clear for the new cycle.
         </p>
       </div>
 
@@ -62,7 +64,7 @@ export function PaydayButton() {
             if (error) setError(undefined);
           }}
           onKeyDown={(e) => e.key === "Enter" && handleConfirm()}
-          className={`border rounded-md px-3 py-2 text-base bg-background w-full ${
+          className={`border rounded-xl px-4 py-3 text-base bg-background w-full ${
             error ? "border-destructive" : "border-primary/40"
           }`}
         />
@@ -72,7 +74,7 @@ export function PaydayButton() {
       <div className="flex gap-2">
         <button
           onClick={handleConfirm}
-          className="flex-1 rounded-md bg-primary text-primary-foreground px-4 py-3 text-sm font-semibold"
+          className="flex-1 rounded-xl bg-primary text-primary-foreground px-4 py-3 text-sm font-semibold"
         >
           Start fresh cycle
         </button>
@@ -82,7 +84,7 @@ export function PaydayButton() {
             setValue("");
             setError(undefined);
           }}
-          className="rounded-md border px-4 py-3 text-sm font-medium text-muted-foreground"
+          className="rounded-xl border px-4 py-3 text-sm font-medium text-muted-foreground"
         >
           Cancel
         </button>

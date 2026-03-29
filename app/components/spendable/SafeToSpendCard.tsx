@@ -59,7 +59,7 @@ function PayCycleBar({
           style={{ width: `${progress * 100}%` }}
         />
       </div>
-      <p className="text-[11px] text-muted-foreground text-center tabular-nums">
+      <p className="text-xs text-muted-foreground text-center tabular-nums">
         {daysUntil === 0
           ? "Payday is today!"
           : `${daysUntil} day${daysUntil === 1 ? "" : "s"} to payday`}
@@ -80,11 +80,11 @@ export function SafeToSpendCard({ onGoToSetup }: { onGoToSetup: () => void }) {
 
   if (!hydrated) {
     return (
-      <div className="px-5 pt-7 pb-5 animate-pulse">
-        <div className="h-3 w-24 rounded-full bg-muted mb-4 mx-auto" />
-        <div className="h-14 w-44 rounded-xl bg-muted mx-auto mb-5" />
+      <div className="px-5 pt-8 pb-6 animate-pulse">
+        <div className="h-3 w-24 rounded-full bg-muted mb-5 mx-auto" />
+        <div className="h-14 w-52 rounded-xl bg-muted mx-auto mb-5" />
         <div className="h-1 w-full rounded-full bg-muted mb-1.5" />
-        <div className="h-3 w-40 rounded-full bg-muted mx-auto mb-5" />
+        <div className="h-3 w-40 rounded-full bg-muted mx-auto mb-6" />
         <div className="flex gap-2">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex-1 h-16 rounded-2xl bg-muted" />
@@ -97,10 +97,11 @@ export function SafeToSpendCard({ onGoToSetup }: { onGoToSetup: () => void }) {
   const cycleDays = income ? FREQUENCY_DAYS[income.frequency] : 14;
 
   return (
-    <div className="px-5 pt-7 pb-5">
+    <div className="px-5 pt-8 pb-6">
+
       {/* Label */}
       <p
-        className={`text-[10px] font-bold tracking-[0.18em] uppercase text-center mb-3 ${
+        className={`text-xs font-semibold tracking-[0.12em] uppercase text-center mb-3 ${
           isNegative ? "text-warning/70" : "text-muted-foreground"
         }`}
       >
@@ -108,19 +109,18 @@ export function SafeToSpendCard({ onGoToSetup }: { onGoToSetup: () => void }) {
       </p>
 
       {!hasIncome ? (
-        <div className="flex flex-col items-center gap-2 text-center py-2 mb-5">
+        <div className="flex flex-col items-center gap-2 text-center py-3 mb-5">
           <p className="text-4xl mb-1">💸</p>
           <p className="text-base font-semibold">Set up your income</p>
           <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-            Tap <strong>Setup</strong> below to add your pay schedule and see
-            your safe-to-spend number.
+            Tap <strong>Setup</strong> below to add your pay schedule.
           </p>
         </div>
       ) : (
         <>
-          {/* Hero number */}
+          {/* Hero number — sans-serif + tabular-nums for clean, readable financials */}
           <p
-            className={`text-[3.75rem] leading-none font-bold tabular-nums font-mono text-center mb-5 tracking-tight transition-colors ${
+            className={`text-[3.5rem] leading-none font-bold tabular-nums text-center mb-5 tracking-tight transition-colors ${
               isNegative ? "text-warning" : "text-primary"
             }`}
           >
@@ -129,48 +129,50 @@ export function SafeToSpendCard({ onGoToSetup }: { onGoToSetup: () => void }) {
 
           {/* Pay cycle progress bar */}
           {nextPayday && (
-            <div className="mb-5">
+            <div className="mb-6">
               <PayCycleBar nextPayday={nextPayday} cycleDays={cycleDays} />
             </div>
           )}
 
           {/* Stat chips */}
           <div className="flex gap-2">
-            {/* Balance chip — navigates to Setup */}
+
+            {/* Balance chip — tappable, routes to Setup */}
             <button
               onClick={onGoToSetup}
               className="flex-1 rounded-2xl bg-muted/60 px-3 py-3 text-left active:bg-muted active:scale-[0.97] transition-all"
             >
-              <p className="text-[9px] font-bold tracking-widest uppercase text-muted-foreground mb-1">
+              <p className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground mb-1">
                 Balance
               </p>
-              <p className="text-sm font-semibold tabular-nums font-mono leading-none">
+              <p className="text-sm font-semibold tabular-nums leading-none">
                 {formatCurrency(settings.currentBalanceCents)}
               </p>
-              <p className="text-[9px] text-muted-foreground/60 mt-1">tap to edit</p>
+              <p className="text-[10px] text-muted-foreground/60 mt-1">tap to edit</p>
             </button>
 
             {/* Committed chip */}
             <div className="flex-1 rounded-2xl bg-muted/60 px-3 py-3">
-              <p className="text-[9px] font-bold tracking-widest uppercase text-muted-foreground mb-1">
+              <p className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground mb-1">
                 Bills
               </p>
-              <p className="text-sm font-semibold tabular-nums font-mono leading-none text-destructive/80">
+              <p className="text-sm font-semibold tabular-nums leading-none text-destructive/80">
                 −{formatCurrency(committedCents)}
               </p>
-              <p className="text-[9px] text-muted-foreground/60 mt-1">committed</p>
+              <p className="text-[10px] text-muted-foreground/60 mt-1">committed</p>
             </div>
 
             {/* Buffer chip */}
             <div className="flex-1 rounded-2xl bg-muted/60 px-3 py-3">
-              <p className="text-[9px] font-bold tracking-widest uppercase text-muted-foreground mb-1">
+              <p className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground mb-1">
                 Buffer
               </p>
-              <p className="text-sm font-semibold tabular-nums font-mono leading-none">
+              <p className="text-sm font-semibold tabular-nums leading-none">
                 −{formatCurrency(settings.bufferCents)}
               </p>
-              <p className="text-[9px] text-muted-foreground/60 mt-1">safety net</p>
+              <p className="text-[10px] text-muted-foreground/60 mt-1">safety net</p>
             </div>
+
           </div>
         </>
       )}

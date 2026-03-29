@@ -106,7 +106,7 @@ export function ExpenseList() {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
           Upcoming expenses
         </h2>
         <button

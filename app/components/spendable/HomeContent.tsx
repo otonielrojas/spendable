@@ -15,30 +15,28 @@ import { BottomNav, Tab } from "@/components/ui/BottomNav";
 
 function LoadingSkeleton() {
   return (
-    <main className="min-h-dvh bg-background text-foreground overflow-x-hidden">
-      <div className="max-w-md mx-auto flex flex-col min-h-dvh">
-        <header className="px-5 py-4 flex items-center justify-between shrink-0">
-          <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
-          <div className="h-4 w-20 rounded-full bg-muted animate-pulse" />
-          <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
-        </header>
-        <div className="px-5 pt-7 pb-5 animate-pulse shrink-0">
-          <div className="h-3 w-24 rounded-full bg-muted mb-4 mx-auto" />
-          <div className="h-14 w-44 rounded-xl bg-muted mx-auto mb-5" />
-          <div className="h-1 w-full rounded-full bg-muted mb-1.5" />
-          <div className="h-3 w-40 rounded-full bg-muted mx-auto mb-5" />
-          <div className="flex gap-2">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex-1 h-16 rounded-2xl bg-muted" />
-            ))}
-          </div>
+    <main className="bg-background text-foreground overflow-x-hidden">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border px-5 py-3 flex items-center justify-between">
+        <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+        <div className="h-3 w-20 rounded-full bg-muted animate-pulse" />
+        <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+      </header>
+      <div className="max-w-md mx-auto px-5 pt-6 pb-2 animate-pulse">
+        <div className="h-3 w-24 rounded-full bg-muted mb-4 mx-auto" />
+        <div className="h-14 w-44 rounded-xl bg-muted mx-auto mb-5" />
+        <div className="h-1 w-full rounded-full bg-muted mb-1.5" />
+        <div className="h-3 w-40 rounded-full bg-muted mx-auto mb-5" />
+        <div className="flex gap-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex-1 h-16 rounded-2xl bg-muted" />
+          ))}
         </div>
-        <div className="h-px bg-border mx-5 shrink-0" />
-        <div className="flex-1 px-5 py-5 flex flex-col gap-3 animate-pulse">
-          <div className="h-12 rounded-xl bg-muted" />
-          <div className="h-10 rounded-xl bg-muted" />
-          <div className="h-10 rounded-xl bg-muted" />
-        </div>
+      </div>
+      <div className="h-px bg-border mx-5" />
+      <div className="max-w-md mx-auto px-5 py-5 flex flex-col gap-3 animate-pulse">
+        <div className="h-12 rounded-xl bg-muted" />
+        <div className="h-10 rounded-xl bg-muted" />
+        <div className="h-10 rounded-xl bg-muted" />
       </div>
     </main>
   );
@@ -71,13 +69,15 @@ export function HomeContent() {
   }
 
   return (
-    <main className="min-h-dvh bg-background text-foreground overflow-x-hidden">
-      <div className="max-w-md mx-auto flex flex-col min-h-dvh">
+    <main className="bg-background text-foreground overflow-x-hidden">
 
-        {/* Header */}
-        <header className="px-5 py-4 flex items-center justify-between shrink-0">
+      {/* Sticky header — stays visible while content scrolls */}
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="max-w-md mx-auto px-5 py-3 flex items-center justify-between">
           <ThemeToggle />
-          <h1 className="text-sm font-semibold tracking-tight">spendable</h1>
+          <h1 className="text-[11px] font-bold tracking-[0.3em] uppercase">
+            spendable
+          </h1>
           <button
             onClick={() => setShowOnboarding(true)}
             title="Show tutorial"
@@ -86,49 +86,46 @@ export function HomeContent() {
           >
             ?
           </button>
-        </header>
-
-        {/* Hero — always visible above the tabs */}
-        <div className="shrink-0">
-          <SafeToSpendCard
-            onGoToSetup={() => setTab("setup")}
-          />
         </div>
+      </header>
 
-        {/* Separator */}
-        <div className="h-px bg-border mx-5 shrink-0" />
-
-        {/* Scrollable tab content */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden pb-24">
-
-          {tab === "home" && (
-            <div className="px-5 py-5 flex flex-col gap-6">
-              <PaydayButton />
-              <TransactionLog />
-            </div>
-          )}
-
-          {tab === "bills" && (
-            <div className="px-5 py-5">
-              <ExpenseList />
-            </div>
-          )}
-
-          {tab === "setup" && (
-            <div className="px-5 py-5 flex flex-col gap-6">
-              <BalanceInput />
-              <SetupIncome />
-            </div>
-          )}
-
-        </div>
+      {/* Hero — scrolls with the page (no fixed height, no inner scroll container) */}
+      <div className="max-w-md mx-auto">
+        <SafeToSpendCard onGoToSetup={() => setTab("setup")} />
       </div>
 
-      {/* Fixed bottom nav — outside the max-w-md column so it's full-width */}
-      <BottomNav
-        tab={tab}
-        onChange={(t) => setTab(t)}
-      />
+      {/* Separator */}
+      <div className="h-px bg-border mx-5 max-w-md mx-auto" />
+
+      {/* Tab content — natural height, whole page scrolls.
+          This is intentional: avoids iOS keyboard shrinking a fixed-height
+          inner scroll container, which causes forms to fill weirdly. */}
+      <div className="max-w-md mx-auto pb-32">
+
+        {tab === "home" && (
+          <div className="px-5 pt-5 flex flex-col gap-6">
+            <PaydayButton />
+            <TransactionLog />
+          </div>
+        )}
+
+        {tab === "bills" && (
+          <div className="px-5 pt-5">
+            <ExpenseList />
+          </div>
+        )}
+
+        {tab === "setup" && (
+          <div className="px-5 pt-5 flex flex-col gap-6">
+            <BalanceInput />
+            <SetupIncome />
+          </div>
+        )}
+
+      </div>
+
+      {/* Fixed bottom nav */}
+      <BottomNav tab={tab} onChange={(t) => setTab(t)} />
     </main>
   );
 }
