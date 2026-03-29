@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useSpendableStore } from "@/lib/store";
-import { todayISO } from "@/lib/calculate";
 
 /** Returns an ISO date string n days from today */
 function daysFromNow(n: number): string {
