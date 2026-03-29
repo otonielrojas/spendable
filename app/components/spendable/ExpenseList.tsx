@@ -35,8 +35,8 @@ export function ExpenseList() {
 
     if (!dueDate) {
       next.dueDate = "Select a due date.";
-    } else if (dueDate <= todayISO()) {
-      next.dueDate = "Due date must be in the future.";
+    } else if (dueDate < todayISO()) {
+      next.dueDate = "Due date must be today or later.";
     }
 
     setErrors(next);
