@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 const STORAGE_KEY = "spendable-theme";
@@ -14,7 +14,7 @@ export function useTheme() {
       ? "dark"
       : "light";
     const initial = stored ?? preferred;
-    setTheme(initial);
+    startTransition(() => setTheme(initial));
     document.documentElement.classList.toggle("dark", initial === "dark");
   }, []);
 

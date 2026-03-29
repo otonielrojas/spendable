@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { useSpendableStore } from "@/lib/store";
 import { SetupIncome } from "./SetupIncome";
 import { ExpenseList } from "./ExpenseList";
@@ -44,7 +44,7 @@ export function OnboardingWizard({ onComplete, replay = false, onDismiss }: Onbo
   const [incomeWasNullOnMount] = useState(income === null);
   useEffect(() => {
     if (!replay && step === 1 && income !== null && incomeWasNullOnMount) {
-      setStep(2);
+      startTransition(() => setStep(2));
     }
   }, [income, step, replay, incomeWasNullOnMount]);
 
