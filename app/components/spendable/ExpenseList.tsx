@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useSpendableStore } from "@/lib/store";
 import { Expense } from "@/lib/types";
 import { formatCurrency, todayISO } from "@/lib/calculate";
@@ -10,9 +10,51 @@ function generateId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
+function ExpenseRow({
+  expense: e,
+  onRemove,
+  past = false,
+}: {
+  expense: Expense;
+  onRemove: (id: string) => void;
+  past?: boolean;
+}) {
+  return (
+    <li className={`flex items-center justify-between rounded-lg border px-3 py-2 text-sm ${past ? "line-through" : ""}`}>
+      <div>
+        <span className="font-medium">{e.name}</span>
+        <span className="ml-2 text-muted-foreground">
+          due{" "}
+          {new Date(e.dueDate + "T00:00:00").toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          })}
+        </span>
+      </div>
+      <div className="flex items-center gap-3">
+        <span className="font-medium">{formatCurrency(e.amountCents)}</span>
+        <button
+          onClick={() => onRemove(e.id)}
+          className="text-muted-foreground hover:text-destructive text-xs p-2"
+        >
+          ✕
+        </button>
+      </div>
+    </li>
+  );
+}
+
 export function ExpenseList() {
   const hydrated = useHydrated();
   const { expenses, addExpense, removeExpense } = useSpendableStore();
+
+  const today = todayISO();
+  const upcomingExpenses = expenses.filter((e) => e.dueDate >= today);
+  const pastExpenses = expenses.filter((e) => e.dueDate < today);
+
+  const clearPast = useCallback(() => {
+    pastExpenses.forEach((e) => removeExpense(e.id));
+  }, [pastExpenses, removeExpense]);
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
@@ -156,7 +198,7 @@ export function ExpenseList() {
             <div key={i} className="h-10 rounded-lg bg-muted animate-pulse" />
           ))}
         </div>
-      ) : expenses.length === 0 ? (
+      ) : upcomingExpenses.length === 0 && pastExpenses.length === 0 ? (
         <div className="rounded-xl border border-dashed px-4 py-6 flex flex-col items-center gap-1 text-center">
           <p className="text-2xl">📋</p>
           <p className="text-sm font-medium text-foreground">No upcoming expenses</p>
@@ -165,34 +207,34 @@ export function ExpenseList() {
           </p>
         </div>
       ) : (
-        <ul className="flex flex-col gap-1">
-          {expenses.map((e) => (
-            <li
-              key={e.id}
-              className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
-            >
-              <div>
-                <span className="font-medium">{e.name}</span>
-                <span className="ml-2 text-muted-foreground">
-                  due{" "}
-                  {new Date(e.dueDate + "T00:00:00").toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
+        <div className="flex flex-col gap-1">
+          <ul className="flex flex-col gap-1">
+            {upcomingExpenses.map((e) => (
+              <ExpenseRow key={e.id} expense={e} onRemove={removeExpense} />
+            ))}
+          </ul>
+
+          {pastExpenses.length > 0 && (
+            <div className="mt-2 flex flex-col gap-1">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">
+                  Past
                 </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="font-medium">{formatCurrency(e.amountCents)}</span>
                 <button
-                  onClick={() => removeExpense(e.id)}
-                  className="text-muted-foreground hover:text-destructive text-xs p-2"
+                  onClick={clearPast}
+                  className="text-xs text-muted-foreground hover:text-destructive py-1 px-1"
                 >
-                  ✕
+                  Clear all
                 </button>
               </div>
-            </li>
-          ))}
-        </ul>
+              <ul className="flex flex-col gap-1 opacity-50">
+                {pastExpenses.map((e) => (
+                  <ExpenseRow key={e.id} expense={e} onRemove={removeExpense} past />
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

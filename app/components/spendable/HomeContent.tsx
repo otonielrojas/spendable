@@ -9,6 +9,7 @@ import { SetupIncome } from "./SetupIncome";
 import { BalanceInput } from "./BalanceInput";
 import { ExpenseList } from "./ExpenseList";
 import { TransactionLog } from "./TransactionLog";
+import { PaydayButton } from "./PaydayButton";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function HomeContent() {
@@ -65,8 +66,12 @@ export function HomeContent() {
 
         <SafeToSpendCard />
 
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-4">
           <BalanceInput />
+        </div>
+
+        <div className="mb-6">
+          <PaydayButton />
         </div>
 
         <div className="border-t mb-6" />
