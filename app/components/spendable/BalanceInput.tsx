@@ -38,17 +38,28 @@ export function BalanceInput() {
     return (
       <button
         onClick={() => setEditing(true)}
-        className="text-sm text-muted-foreground underline underline-offset-4 py-2 px-1"
+        className="w-full rounded-xl border border-border bg-card px-4 py-3.5 text-left flex items-center justify-between group hover:border-primary/40 transition-colors"
       >
-        Balance: {formatCurrency(settings.currentBalanceCents)} — tap to update
+        <div>
+          <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground mb-0.5">
+            Current Balance
+          </p>
+          <p className="text-lg font-semibold tabular-nums font-mono">
+            {formatCurrency(settings.currentBalanceCents)}
+          </p>
+        </div>
+        <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors">
+          Edit →
+        </span>
       </button>
     );
   }
 
   return (
-    <div className="flex flex-col gap-1 items-center">
-      <div className="flex gap-2 items-center">
-        <span className="text-sm font-medium">Balance $</span>
+    <div className="rounded-xl border border-primary/40 bg-primary/5 p-4 flex flex-col gap-3">
+      <p className="text-sm font-semibold">Update your balance</p>
+      <div className="flex flex-col gap-1">
+        <label className="text-xs text-muted-foreground font-medium">Balance ($)</label>
         <input
           type="number"
           inputMode="decimal"
@@ -62,13 +73,16 @@ export function BalanceInput() {
             if (error) setError(undefined);
           }}
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
-          className={`border rounded-md px-3 py-1.5 text-sm bg-background w-36 ${
-            error ? "border-destructive" : ""
+          className={`w-full border rounded-md px-3 py-2.5 text-base bg-background ${
+            error ? "border-destructive" : "border-primary/40"
           }`}
         />
+        {error && <span className="text-xs text-destructive">{error}</span>}
+      </div>
+      <div className="flex gap-2">
         <button
           onClick={handleSave}
-          className="rounded-md bg-primary text-primary-foreground px-3 py-1.5 text-sm font-medium"
+          className="flex-1 rounded-md bg-primary text-primary-foreground px-4 py-2.5 text-sm font-semibold"
         >
           Save
         </button>
@@ -77,12 +91,11 @@ export function BalanceInput() {
             setEditing(false);
             setError(undefined);
           }}
-          className="text-sm text-muted-foreground"
+          className="rounded-md border px-4 py-2.5 text-sm font-medium text-muted-foreground"
         >
           Cancel
         </button>
       </div>
-      {error && <span className="text-xs text-destructive">{error}</span>}
     </div>
   );
 }

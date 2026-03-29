@@ -11,28 +11,48 @@ import { ExpenseList } from "./ExpenseList";
 import { TransactionLog } from "./TransactionLog";
 import { PaydayButton } from "./PaydayButton";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { BottomNav, Tab } from "@/components/ui/BottomNav";
+
+function LoadingSkeleton() {
+  return (
+    <main className="min-h-dvh bg-background text-foreground overflow-x-hidden">
+      <div className="max-w-md mx-auto flex flex-col min-h-dvh">
+        <header className="px-5 py-4 flex items-center justify-between shrink-0">
+          <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+          <div className="h-4 w-20 rounded-full bg-muted animate-pulse" />
+          <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+        </header>
+        <div className="px-5 pt-7 pb-5 animate-pulse shrink-0">
+          <div className="h-3 w-24 rounded-full bg-muted mb-4 mx-auto" />
+          <div className="h-14 w-44 rounded-xl bg-muted mx-auto mb-5" />
+          <div className="h-1 w-full rounded-full bg-muted mb-1.5" />
+          <div className="h-3 w-40 rounded-full bg-muted mx-auto mb-5" />
+          <div className="flex gap-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex-1 h-16 rounded-2xl bg-muted" />
+            ))}
+          </div>
+        </div>
+        <div className="h-px bg-border mx-5 shrink-0" />
+        <div className="flex-1 px-5 py-5 flex flex-col gap-3 animate-pulse">
+          <div className="h-12 rounded-xl bg-muted" />
+          <div className="h-10 rounded-xl bg-muted" />
+          <div className="h-10 rounded-xl bg-muted" />
+        </div>
+      </div>
+    </main>
+  );
+}
 
 export function HomeContent() {
   const hydrated = useHydrated();
   const income = useSpendableStore((s) => s.income);
   const [onboarded, setOnboarded] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [tab, setTab] = useState<Tab>("home");
 
   if (!hydrated) {
-    return (
-      <main className="min-h-screen bg-background text-foreground">
-        <div className="mx-auto max-w-md px-4">
-          <header className="py-6 text-center">
-            <h1 className="text-xl font-bold tracking-tight">spendable</h1>
-          </header>
-          <div className="h-32 rounded-xl bg-muted animate-pulse mb-6" />
-          <div className="h-5 w-48 rounded bg-muted animate-pulse mx-auto mb-8" />
-          <div className="border-t mb-6" />
-          <div className="h-20 rounded-xl bg-muted animate-pulse mb-4" />
-          <div className="h-20 rounded-xl bg-muted animate-pulse" />
-        </div>
-      </main>
-    );
+    return <LoadingSkeleton />;
   }
 
   const isFirstTime = !income && !onboarded;
@@ -41,53 +61,74 @@ export function HomeContent() {
     return (
       <OnboardingWizard
         replay={showOnboarding && !isFirstTime}
-        onComplete={() => { setOnboarded(true); setShowOnboarding(false); }}
+        onComplete={() => {
+          setOnboarded(true);
+          setShowOnboarding(false);
+        }}
         onDismiss={() => setShowOnboarding(false)}
       />
     );
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      <div className="mx-auto max-w-md w-full px-4 pb-safe">
-        <header className="py-6 flex items-center justify-center relative">
-          <div className="absolute left-0">
-            <ThemeToggle />
-          </div>
-          <h1 className="text-xl font-bold tracking-tight">spendable</h1>
+    <main className="min-h-dvh bg-background text-foreground overflow-x-hidden">
+      <div className="max-w-md mx-auto flex flex-col min-h-dvh">
+
+        {/* Header */}
+        <header className="px-5 py-4 flex items-center justify-between shrink-0">
+          <ThemeToggle />
+          <h1 className="text-sm font-semibold tracking-tight">spendable</h1>
           <button
             onClick={() => setShowOnboarding(true)}
             title="Show tutorial"
-            className="absolute right-0 text-muted-foreground hover:text-foreground w-8 h-8 rounded-full border flex items-center justify-center text-sm"
+            className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-xs text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
+            aria-label="Show tutorial"
           >
             ?
           </button>
         </header>
 
-        <SafeToSpendCard />
-
-        <div className="flex justify-center mb-4">
-          <BalanceInput />
+        {/* Hero — always visible above the tabs */}
+        <div className="shrink-0">
+          <SafeToSpendCard
+            onGoToSetup={() => setTab("setup")}
+          />
         </div>
 
-        <div className="mb-6">
-          <PaydayButton />
-        </div>
+        {/* Separator */}
+        <div className="h-px bg-border mx-5 shrink-0" />
 
-        <div className="border-t mb-6" />
+        {/* Scrollable tab content */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden pb-24">
 
-        <div className="mb-6">
-          <SetupIncome />
-        </div>
+          {tab === "home" && (
+            <div className="px-5 py-5 flex flex-col gap-6">
+              <PaydayButton />
+              <TransactionLog />
+            </div>
+          )}
 
-        <div className="mb-6">
-          <ExpenseList />
-        </div>
+          {tab === "bills" && (
+            <div className="px-5 py-5">
+              <ExpenseList />
+            </div>
+          )}
 
-        <div className="mb-6">
-          <TransactionLog />
+          {tab === "setup" && (
+            <div className="px-5 py-5 flex flex-col gap-6">
+              <BalanceInput />
+              <SetupIncome />
+            </div>
+          )}
+
         </div>
       </div>
+
+      {/* Fixed bottom nav — outside the max-w-md column so it's full-width */}
+      <BottomNav
+        tab={tab}
+        onChange={(t) => setTab(t)}
+      />
     </main>
   );
 }
