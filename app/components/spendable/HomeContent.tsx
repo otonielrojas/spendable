@@ -48,8 +48,8 @@ export function HomeContent() {
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-md px-4 pb-safe">
+    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <div className="mx-auto max-w-md w-full px-4 pb-safe">
         <header className="py-6 flex items-center justify-center relative">
           <div className="absolute left-0">
             <ThemeToggle />
