@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSpendableStore } from "@/lib/store";
 import { SetupIncome } from "./SetupIncome";
 import { ExpenseList } from "./ExpenseList";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 type Step = 1 | 2 | 3;
 
@@ -63,6 +64,9 @@ export function OnboardingWizard({ onComplete, replay = false, onDismiss }: Onbo
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-md px-4 pb-safe">
         <header className="py-6 flex items-center justify-center relative">
+          <div className="absolute left-0">
+            <ThemeToggle />
+          </div>
           <h1 className="text-xl font-bold tracking-tight">spendable</h1>
           {replay && onDismiss && (
             <button

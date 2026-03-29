@@ -46,7 +46,7 @@ export function SafeToSpendCard() {
         <>
           <p
             className={`text-7xl font-bold tabular-nums transition-colors ${
-              isNegative ? "text-destructive" : "text-primary"
+              isNegative ? "text-warning" : "text-primary"
             }`}
           >
             {formatCurrency(safeToSpendCents)}

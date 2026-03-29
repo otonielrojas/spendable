@@ -9,6 +9,7 @@ import { SetupIncome } from "./SetupIncome";
 import { BalanceInput } from "./BalanceInput";
 import { ExpenseList } from "./ExpenseList";
 import { TransactionLog } from "./TransactionLog";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function HomeContent() {
   const hydrated = useHydrated();
@@ -49,6 +50,9 @@ export function HomeContent() {
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-md px-4 pb-safe">
         <header className="py-6 flex items-center justify-center relative">
+          <div className="absolute left-0">
+            <ThemeToggle />
+          </div>
           <h1 className="text-xl font-bold tracking-tight">spendable</h1>
           <button
             onClick={() => setShowOnboarding(true)}
