@@ -3,8 +3,74 @@
 import { useSpendableStore } from "@/lib/store";
 import { formatCurrency } from "@/lib/calculate";
 import { useHydrated } from "@/lib/useHydrated";
+import { PayFrequency } from "@/lib/types";
 
-export function SafeToSpendCard() {
+const FREQUENCY_DAYS: Record<PayFrequency, number> = {
+  weekly: 7,
+  biweekly: 14,
+  semimonthly: 15,
+  monthly: 30,
+};
+
+function getPayCycleProgress(
+  nextPayday: string,
+  cycleDays: number
+): { progress: number; daysUntil: number } {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const payday = new Date(nextPayday + "T00:00:00");
+  const lastPayday = new Date(payday);
+  lastPayday.setDate(lastPayday.getDate() - cycleDays);
+
+  const totalMs = payday.getTime() - lastPayday.getTime();
+  const elapsedMs = today.getTime() - lastPayday.getTime();
+  const progress = Math.min(1, Math.max(0, elapsedMs / totalMs));
+
+  const daysUntil = Math.max(
+    0,
+    Math.ceil((payday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+  );
+
+  return { progress, daysUntil };
+}
+
+function PayCycleBar({
+  nextPayday,
+  cycleDays,
+}: {
+  nextPayday: string;
+  cycleDays: number;
+}) {
+  const { progress, daysUntil } = getPayCycleProgress(nextPayday, cycleDays);
+  const isNearEnd = progress > 0.75;
+  const paydayDate = new Date(nextPayday + "T00:00:00").toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
+  return (
+    <div className="flex flex-col gap-1.5 w-full">
+      <div className="h-1 w-full rounded-full bg-border overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-700 ease-out ${
+            isNearEnd ? "bg-warning" : "bg-primary"
+          }`}
+          style={{ width: `${progress * 100}%` }}
+        />
+      </div>
+      <p className="text-xs text-muted-foreground text-center tabular-nums">
+        {daysUntil === 0
+          ? "Payday is today!"
+          : `${daysUntil} day${daysUntil === 1 ? "" : "s"} to payday`}
+        {" · "}
+        {paydayDate}
+      </p>
+    </div>
+  );
+}
+
+export function SafeToSpendCard({ onGoToSetup }: { onGoToSetup: () => void }) {
   const hydrated = useHydrated();
   const { safeToSpendCents, nextPayday, committedCents, settings, income } =
     useSpendableStore();
@@ -14,66 +80,99 @@ export function SafeToSpendCard() {
 
   if (!hydrated) {
     return (
-      <div className="flex flex-col items-center gap-2 py-10 animate-pulse">
-        <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
-          Safe to Spend
-        </p>
-        <div className="h-20 w-48 rounded-xl bg-muted" />
-        <div className="mt-4 flex flex-col items-center gap-2">
-          <div className="h-4 w-32 rounded bg-muted" />
-          <div className="h-4 w-28 rounded bg-muted" />
-          <div className="h-4 w-24 rounded bg-muted" />
+      <div className="px-5 pt-8 pb-6 animate-pulse">
+        <div className="h-3 w-24 rounded-full bg-muted mb-5 mx-auto" />
+        <div className="h-14 w-52 rounded-xl bg-muted mx-auto mb-5" />
+        <div className="h-1 w-full rounded-full bg-muted mb-1.5" />
+        <div className="h-3 w-40 rounded-full bg-muted mx-auto mb-6" />
+        <div className="flex gap-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex-1 h-16 rounded-2xl bg-muted" />
+          ))}
         </div>
       </div>
     );
   }
 
+  const cycleDays = income ? FREQUENCY_DAYS[income.frequency] : 14;
+
   return (
-    <div className="flex flex-col items-center gap-2 py-10">
-      <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
-        Safe to Spend
+    <div className="px-5 pt-8 pb-6">
+
+      {/* Label */}
+      <p
+        className={`text-xs font-semibold tracking-[0.12em] uppercase text-center mb-3 ${
+          isNegative ? "text-warning/70" : "text-muted-foreground"
+        }`}
+      >
+        {isNegative ? "Over Budget" : "Safe to Spend"}
       </p>
 
       {!hasIncome ? (
-        <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-5xl">💸</p>
-          <p className="text-xl font-semibold text-foreground">You&apos;re all set up</p>
-          <p className="text-sm text-muted-foreground max-w-xs">
-            Add your income below to see how much you can safely spend before your next payday.
+        <div className="flex flex-col items-center gap-2 text-center py-3 mb-5">
+          <p className="text-4xl mb-1">💸</p>
+          <p className="text-base font-semibold">Set up your income</p>
+          <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+            Tap <strong>Setup</strong> below to add your pay schedule.
           </p>
         </div>
       ) : (
         <>
+          {/* Hero number — sans-serif + tabular-nums for clean, readable financials */}
           <p
-            className={`text-7xl font-bold tabular-nums transition-colors ${
-              isNegative ? "text-destructive" : "text-primary"
+            className={`text-[3.5rem] leading-none font-bold tabular-nums text-center mb-5 tracking-tight transition-colors ${
+              isNegative ? "text-warning" : "text-primary"
             }`}
           >
             {formatCurrency(safeToSpendCents)}
           </p>
 
-          <div className="mt-4 flex flex-col items-center gap-1 text-sm text-muted-foreground">
-            <span>
-              Balance: <strong>{formatCurrency(settings.currentBalanceCents)}</strong>
-            </span>
-            <span>
-              Committed: <strong>−{formatCurrency(committedCents)}</strong>
-            </span>
-            <span>
-              Buffer: <strong>−{formatCurrency(settings.bufferCents)}</strong>
-            </span>
-            {nextPayday && (
-              <span className="mt-1 text-xs">
-                Next payday:{" "}
-                <strong>
-                  {new Date(nextPayday + "T00:00:00").toLocaleDateString("en-US", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </strong>
-              </span>
-            )}
+          {/* Pay cycle progress bar */}
+          {nextPayday && (
+            <div className="mb-6">
+              <PayCycleBar nextPayday={nextPayday} cycleDays={cycleDays} />
+            </div>
+          )}
+
+          {/* Stat chips */}
+          <div className="flex gap-2">
+
+            {/* Balance chip — tappable, routes to Setup */}
+            <button
+              onClick={onGoToSetup}
+              className="flex-1 rounded-2xl bg-muted/60 px-3 py-3 text-left active:bg-muted active:scale-[0.97] transition-all"
+            >
+              <p className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground mb-1">
+                Balance
+              </p>
+              <p className="text-sm font-semibold tabular-nums leading-none">
+                {formatCurrency(settings.currentBalanceCents)}
+              </p>
+              <p className="text-[10px] text-muted-foreground/60 mt-1">tap to edit</p>
+            </button>
+
+            {/* Committed chip */}
+            <div className="flex-1 rounded-2xl bg-muted/60 px-3 py-3">
+              <p className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground mb-1">
+                Bills
+              </p>
+              <p className="text-sm font-semibold tabular-nums leading-none text-destructive/80">
+                −{formatCurrency(committedCents)}
+              </p>
+              <p className="text-[10px] text-muted-foreground/60 mt-1">committed</p>
+            </div>
+
+            {/* Buffer chip */}
+            <div className="flex-1 rounded-2xl bg-muted/60 px-3 py-3">
+              <p className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground mb-1">
+                Buffer
+              </p>
+              <p className="text-sm font-semibold tabular-nums leading-none">
+                −{formatCurrency(settings.bufferCents)}
+              </p>
+              <p className="text-[10px] text-muted-foreground/60 mt-1">safety net</p>
+            </div>
+
           </div>
         </>
       )}

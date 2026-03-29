@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { useSpendableStore } from "./store";
 
 /**
@@ -14,7 +14,7 @@ export function useHydrated(): boolean {
   useEffect(() => {
     // useEffect only runs on the client, where persist is available
     if (useSpendableStore.persist.hasHydrated()) {
-      setHydrated(true);
+      startTransition(() => setHydrated(true));
       return;
     }
     const unsub = useSpendableStore.persist.onFinishHydration(() => {

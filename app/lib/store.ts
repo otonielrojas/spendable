@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Expense, Income, Settings, Transaction } from "./types";
-import { calcSafeToSpend } from "./calculate";
+import { calcSafeToSpend, getNextPayday, todayISO } from "./calculate";
 
 interface SpendableState {
   income: Income | null;
@@ -23,6 +23,7 @@ interface SpendableState {
   addTransaction: (tx: Transaction) => void;
   removeTransaction: (id: string) => void;
   updateSettings: (settings: Partial<Settings>) => void;
+  justGotPaid: (newBalanceCents: number) => void;
 }
 
 function recalc(state: Pick<SpendableState, "income" | "expenses" | "settings">) {
@@ -94,6 +95,22 @@ export const useSpendableStore = create<SpendableState>()(
           const settings = { ...s.settings, ...partial };
           const derived = recalc({ ...s, settings });
           return { settings, ...derived };
+        }),
+
+      justGotPaid: (newBalanceCents) =>
+        set((s) => {
+          if (!s.income) return s;
+          // Advance nextPayday to the next cycle
+          const nextPayday = getNextPayday(s.income);
+          const income = { ...s.income, nextPayday };
+          // Drop expenses that are already past — keep future ones
+          const today = todayISO();
+          const expenses = s.expenses.filter((e) => e.dueDate > today);
+          // Clear the old cycle's transaction log (fresh start)
+          const transactions: Transaction[] = [];
+          const settings = { ...s.settings, currentBalanceCents: newBalanceCents };
+          const derived = recalc({ income, expenses, settings });
+          return { income, expenses, transactions, settings, ...derived };
         }),
     }),
     {

@@ -1,13 +1,5 @@
 import { Expense, Income, PayFrequency } from "./types";
 
-/** Returns the number of days between two ISO date strings */
-function _daysBetween(a: string, b: string): number {
-  const msPerDay = 1000 * 60 * 60 * 24;
-  return Math.round(
-    (new Date(b).getTime() - new Date(a).getTime()) / msPerDay
-  );
-}
-
 /** Returns the next payday after `from` given the frequency */
 export function getNextPayday(income: Income, from: string = todayISO()): string {
   const frequencyDays: Record<PayFrequency, number> = {
@@ -30,9 +22,13 @@ export function getNextPayday(income: Income, from: string = todayISO()): string
   return payday;
 }
 
-/** Today as ISO date string */
+/** Today as ISO date string in local time (not UTC) */
 export function todayISO(): string {
-  return new Date().toISOString().split("T")[0];
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 /**

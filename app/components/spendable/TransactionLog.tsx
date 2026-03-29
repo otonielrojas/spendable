@@ -55,7 +55,7 @@ export function TransactionLog() {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
           Spending log
         </h2>
         <button
@@ -70,7 +70,7 @@ export function TransactionLog() {
       </div>
 
       {adding && (
-        <div className="rounded-xl border p-3 flex flex-col gap-2">
+        <div className="rounded-xl border p-3 flex flex-col gap-2 overflow-hidden">
           <div className="flex flex-col gap-1">
             <input
               placeholder="What did you spend on?"
@@ -82,7 +82,7 @@ export function TransactionLog() {
                 setDescription(e.target.value);
                 if (errors.description) setErrors((p) => ({ ...p, description: undefined }));
               }}
-              className={`border rounded-md px-3 py-2 text-sm bg-background ${
+              className={`w-full border rounded-md px-3 py-2 text-sm bg-background ${
                 errors.description ? "border-destructive" : ""
               }`}
             />
@@ -105,7 +105,7 @@ export function TransactionLog() {
                 if (errors.amount) setErrors((p) => ({ ...p, amount: undefined }));
               }}
               onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-              className={`border rounded-md px-3 py-2 text-sm bg-background ${
+              className={`w-full border rounded-md px-3 py-2 text-sm bg-background ${
                 errors.amount ? "border-destructive" : ""
               }`}
             />
@@ -116,7 +116,7 @@ export function TransactionLog() {
 
           <button
             onClick={handleAdd}
-            className="rounded-md bg-primary text-primary-foreground px-4 py-3 text-sm font-medium"
+            className="w-full rounded-md bg-primary text-primary-foreground px-4 py-3 text-sm font-medium"
           >
             Log it
           </button>
@@ -142,13 +142,13 @@ export function TransactionLog() {
           {transactions.map((tx) => (
             <li
               key={tx.id}
-              className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
+              className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm"
             >
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="font-medium">{tx.description}</span>
                 <span className="ml-2 text-muted-foreground text-xs">{tx.date}</span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 shrink-0">
                 <span className="font-medium text-destructive">
                   −{formatCurrency(tx.amountCents)}
                 </span>

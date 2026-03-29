@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+# Pre-commit hook: lint must pass before any commit lands.
+# Install once: git config core.hooksPath .githooks
+
+cd "$(git rev-parse --show-toplevel)/app" || exit 1
+
+echo "Running lint..."
+npm run lint || {
+  echo ""
+  echo "Lint failed. Fix errors above before committing."
+  exit 1
+}
